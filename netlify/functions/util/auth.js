@@ -68,11 +68,10 @@ class OAuth {
     return cfg;
   }
 
-  async getUser(token) {
+  async getUser(token, provider) {
     if(!token) {
       throw new Error("Missing authorization token.");
     }
-    const provider = this.config.provider;
     const access_token = this.config.access_token;
     const quotaKey = this.config.quotaKey;
     const url = provider === "stackexchange"
