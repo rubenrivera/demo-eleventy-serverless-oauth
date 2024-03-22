@@ -23,7 +23,7 @@ async function handler(event) {
   let authError;
   try {
     let oauth = new OAuth(provider);
-    user = await oauth.getUser(authToken);
+    user = await oauth.getUser(authToken, provider);
   } catch(e) {
     authError = e;
   }
