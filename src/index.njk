@@ -1,3 +1,14 @@
+<style>
+  /* Hide buttons */
+  button[name=provider] {
+    display: none;
+  }
+
+  /* Show selected buttons */
+  button[name=provider][value=stackexchange]{
+    display: inline-block;
+  }
+</style>
 <form action="/.netlify/functions/auth-before">
   <input type="hidden" name="securePath" value="/secure/">
   <button type="submit" name="provider" value="netlify">Login with Netlify</button>
@@ -5,4 +16,5 @@
   <button type="submit" name="provider" value="gitlab">Login with GitLab</button>
   <button type="submit" name="provider" value="slack">Login with Slack</button>
   <button type="submit" name="provider" value="linkedin">Login with Linkedin</button>
+  <button type="submit" name="provider" value="stackexchange">Login with Stack Overflow</button>
 </form>

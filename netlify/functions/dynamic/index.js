@@ -23,7 +23,7 @@ async function handler(event) {
   let authError;
   try {
     let oauth = new OAuth(provider);
-    user = await oauth.getUser(authToken);
+    user = await oauth.getUser(authToken, provider);
   } catch(e) {
     authError = e;
   }
@@ -70,7 +70,7 @@ async function handler(event) {
 
     // Secure pages
     if(page.data.secure && authError) {
-      console.log("[serverless fn]", event.path, authToken, authError );
+      console.log("[serverless fn]", event.path, authToken, provider, authError );
 
       // unauthenticated redirect
       return {
