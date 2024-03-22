@@ -82,8 +82,8 @@ const stackexchange = {
 
   /* OAuth API endpoints */
   tokenHost: 'https://stackoverflow.com',
-  tokenPath: 'https://stackoverflow.com/oauth/access_token',
-  authorizePath: 'https://stackoverflow/oauth',
+  tokenPath: '/oauth/access_token',
+  authorizePath: '/oauth',
 
   /* Key to receive higher request quota */
   quotaKey: "STACKEXCHANGE_KEY",

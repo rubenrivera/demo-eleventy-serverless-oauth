@@ -32,7 +32,7 @@ exports.handler = async (event, context) => {
     let config = oauth.config;
 
     // Take the grant code and exchange for an accessToken
-    let accessToken;
+    let accessToken, token;
     if(state.provider === "stackexchange") {
       const url = config.tokenPath;
       const options = {
@@ -44,13 +44,17 @@ exports.handler = async (event, context) => {
           code: code,
           redirect_uri: config.redirect_uri,
           client_id: config.clientId,
-          client_secret: config.clientSecret
+          client_secret: config.clientSecret,
+          state: state
         }
-      }  
+      } 
+      console.log(`${url}, ${JSON.stringify(options)}`) 
       const response = await fetch(url, options);
+      console.log(Object.keys(response));
       if(response.status === 200){
-        const match = /access_token=([^=&])*/.exec(response.data);
-        accessToken = match ? match[1] : "";
+        accessToken = response.data;
+        const match = /access_token=([^=&])*/.exec(accessToken);
+        token = match ? match[1] : "";
       } else {
         throw new Error(response.statusText);
       }
@@ -62,32 +66,32 @@ exports.handler = async (event, context) => {
         client_secret: config.clientSecret
       });
 
-      const token = accessToken.token.access_token;
-      // console.log( "[auth-callback]", { token } );
-
-      // The noop key here is to workaround Netlify keeping query params on redirects
-      // https://answers.netlify.com/t/changes-to-redirects-with-query-string-parameters-are-coming/23436/11
-      const URI = `${state.url}?noop`;
-      // console.log( "[auth-callback]", { URI });
-
-      /* Redirect user to authorizationURI */
-      return {
-        statusCode: 302,
-        headers: {
-          Location: URI,
-          'Cache-Control': 'no-cache' // Disable caching of this response
-        },
-        multiValueHeaders: {
-          'Set-Cookie': [
-            // This cookie *must* be HttpOnly
-            getCookie("_11ty_oauth_token", tokens.encode(token), oauth.config.sessionExpiration),
-            getCookie("_11ty_oauth_provider", state.provider, oauth.config.sessionExpiration),
-            getCookie("_11ty_oauth_csrf", "", -1),
-          ]
-        },
-        body: '' // return body for local dev
-      }
+      token = accessToken.token.access_token;
+      console.log( "[auth-callback]", { token } );
     }
+    // The noop key here is to workaround Netlify keeping query params on redirects
+    // https://answers.netlify.com/t/changes-to-redirects-with-query-string-parameters-are-coming/23436/11
+    const URI = `${state.url}?noop`;
+    // console.log( "[auth-callback]", { URI });
+
+    /* Redirect user to authorizationURI */
+    return {
+      statusCode: 302,
+      headers: {
+        Location: URI,
+        'Cache-Control': 'no-cache' // Disable caching of this response
+      },
+      multiValueHeaders: {
+        'Set-Cookie': [
+          // This cookie *must* be HttpOnly
+          getCookie("_11ty_oauth_token", tokens.encode(token), oauth.config.sessionExpiration),
+          getCookie("_11ty_oauth_provider", state.provider, oauth.config.sessionExpiration),
+          getCookie("_11ty_oauth_csrf", "", -1),
+        ]
+      },
+      body: '' // return body for local dev
+    }
+  
   } catch (e) {
     console.log("[auth-callback]", 'Access Token Error', e.message)
     console.log("[auth-callback]", e)
