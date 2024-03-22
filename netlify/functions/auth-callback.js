@@ -34,12 +34,12 @@ exports.handler = async (event, context) => {
     // Take the grant code and exchange for an accessToken
     let accessToken;
     if(state.provider === "stackexchange") {
-      const url = "";
+      const url = config.tokenPath;
       const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
-        }
+        },
         data: {
           code: code,
           redirect_uri: config.redirect_uri,
@@ -56,38 +56,38 @@ exports.handler = async (event, context) => {
       }
     } else {
       accessToken = await oauth.authorizationCode.getToken({
-      code: code,
-      redirect_uri: config.redirect_uri,
-      client_id: config.clientId,
-      client_secret: config.clientSecret
-    });
+        code: code,
+        redirect_uri: config.redirect_uri,
+        client_id: config.clientId,
+        client_secret: config.clientSecret
+      });
 
-    const token = accessToken.token.access_token;
-    // console.log( "[auth-callback]", { token } );
+      const token = accessToken.token.access_token;
+      // console.log( "[auth-callback]", { token } );
 
-    // The noop key here is to workaround Netlify keeping query params on redirects
-    // https://answers.netlify.com/t/changes-to-redirects-with-query-string-parameters-are-coming/23436/11
-    const URI = `${state.url}?noop`;
-    // console.log( "[auth-callback]", { URI });
+      // The noop key here is to workaround Netlify keeping query params on redirects
+      // https://answers.netlify.com/t/changes-to-redirects-with-query-string-parameters-are-coming/23436/11
+      const URI = `${state.url}?noop`;
+      // console.log( "[auth-callback]", { URI });
 
-    /* Redirect user to authorizationURI */
-    return {
-      statusCode: 302,
-      headers: {
-        Location: URI,
-        'Cache-Control': 'no-cache' // Disable caching of this response
-      },
-      multiValueHeaders: {
-        'Set-Cookie': [
-          // This cookie *must* be HttpOnly
-          getCookie("_11ty_oauth_token", tokens.encode(token), oauth.config.sessionExpiration),
-          getCookie("_11ty_oauth_provider", state.provider, oauth.config.sessionExpiration),
-          getCookie("_11ty_oauth_csrf", "", -1),
-        ]
-      },
-      body: '' // return body for local dev
+      /* Redirect user to authorizationURI */
+      return {
+        statusCode: 302,
+        headers: {
+          Location: URI,
+          'Cache-Control': 'no-cache' // Disable caching of this response
+        },
+        multiValueHeaders: {
+          'Set-Cookie': [
+            // This cookie *must* be HttpOnly
+            getCookie("_11ty_oauth_token", tokens.encode(token), oauth.config.sessionExpiration),
+            getCookie("_11ty_oauth_provider", state.provider, oauth.config.sessionExpiration),
+            getCookie("_11ty_oauth_csrf", "", -1),
+          ]
+        },
+        body: '' // return body for local dev
+      }
     }
-
   } catch (e) {
     console.log("[auth-callback]", 'Access Token Error', e.message)
     console.log("[auth-callback]", e)

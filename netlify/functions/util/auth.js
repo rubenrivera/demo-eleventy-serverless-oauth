@@ -75,7 +75,7 @@ class OAuth {
     const access_token = this.config.access_token;
     const quotaKey = this.config.quotaKey;
     const url = provider === "stackexchange"
-      ? `this.config.userApi&access_token=${access_token}&key=${quotaKey}` 
+      ? `${this.config.userApi}&access_token=${access_token}&key=${quotaKey}` 
       : this.config.userApi;
     const options = provider === "stackexchange"
     ?  {

@@ -15,7 +15,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "netlify-cli": "^17.20.0"
+    "netlify-cli": "^17.20.0",
+    "node": "^18.19.1"
   },
   "dependencies": {
     "@11ty/eleventy": "^2.0.1",
