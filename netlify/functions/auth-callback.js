@@ -1,7 +1,7 @@
 const cookie = require("cookie");
 const querystring = require("querystring");
 const { OAuth, tokens, getCookie } = require("./util/auth.js");
-const fetch = require('node-fetch');
+
 
 // Function to handle netlify auth callback
 exports.handler = async (event, context) => {
@@ -35,28 +35,35 @@ exports.handler = async (event, context) => {
     let accessToken, token;
     if(state.provider === "stackexchange") {
       const url = config.tokenPath;
+      const data = {
+        code: code,
+        redirect_uri: config.redirect_uri,
+        client_id: config.clientId,
+        client_secret: config.clientSecret,
+        state: event.queryStringParameters.state
+      };
+      let formBody = [];
+      for (let property in data) {
+        const encodedKey = encodeURIComponent(property);
+        const encodedValue = encodeURIComponent(data[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
       const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        data: {
-          code: code,
-          redirect_uri: config.redirect_uri,
-          client_id: config.clientId,
-          client_secret: config.clientSecret,
-          state: state
-        }
+        body: formBody
       } 
       console.log(`${url}, ${JSON.stringify(options)}`) 
       const response = await fetch(url, options);
-      console.log(Object.keys(response));
-      if(response.status === 200){
-        accessToken = response.data;
-        const match = /access_token=([^=&])*/.exec(accessToken);
-        token = match ? match[1] : "";
+      const accessToken = await response.json();
+      if(await response.status === 200){
+        token = accessToken.access_token;
+        console.log('token: ' + token);
       } else {
-        throw new Error(response.statusText);
+        throw new Error(await response.statusText);
       }
     } else {
       accessToken = await oauth.authorizationCode.getToken({

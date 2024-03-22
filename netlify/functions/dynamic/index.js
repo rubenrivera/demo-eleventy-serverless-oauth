@@ -70,7 +70,7 @@ async function handler(event) {
 
     // Secure pages
     if(page.data.secure && authError) {
-      console.log("[serverless fn]", event.path, authToken, authError );
+      console.log("[serverless fn]", event.path, authToken, provider, authError );
 
       // unauthenticated redirect
       return {

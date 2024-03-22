@@ -1,7 +1,6 @@
 const { AuthorizationCode } = require('simple-oauth2');
 const cookie = require("cookie");
-const fetch = require('node-fetch')
-const zlib = require('zlib');
+const zlib = require("zlib");
 
 
 // Warning: process.env.DEPLOY_PRIME_URL won’t work in a Netlify function here.
@@ -54,9 +53,10 @@ class OAuth {
 
     cfg.clientId = process.env[cfg.clientIdKey];
     cfg.clientSecret = process.env[cfg.clientSecretKey];
-
+    
     if( this.provider === "stackexchange" ){
-      if (!cfg.clientId || !cfg.clientSecret || !cfg.quotaKey) {
+      cfg.quotaKeyValue = process.env[cfg.quotaKey];
+      if (!cfg.clientId || !cfg.clientSecret || !cfg.quotaKeyValue) {
           throw new Error(`MISSING REQUIRED ENV VARS. ${cfg.clientIdKey}, ${cfg.clientSecretKey} and ${cfg.quotaKey} are required.`)
         }
     } else {  
@@ -72,11 +72,11 @@ class OAuth {
     if(!token) {
       throw new Error("Missing authorization token.");
     }
-    const access_token = this.config.access_token;
-    const quotaKey = this.config.quotaKey;
+    const quotaKey = this.config.quotaKeyValue;
     const url = provider === "stackexchange"
-      ? `${this.config.userApi}&access_token=${access_token}&key=${quotaKey}` 
+      ? `${this.config.userApi}&access_token=${token}&key=${quotaKey}` 
       : this.config.userApi;
+    //console.log(url);  
     const options = provider === "stackexchange"
     ?  {
         method: 'GET',
