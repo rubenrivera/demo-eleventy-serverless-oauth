@@ -36,12 +36,14 @@ This example includes Netlify, GitHub, and GitLab providers. If you only want a 
     * [GitLab](https://gitlab.com/-/profile/applications)
     * [Slack](https://api.slack.com/apps) (Redirect URI must be specified in separate Oauth & Permissions section)
     * [LinkedIn](https://www.linkedin.com/developers/apps) (To enable this you _must_ 1. create a LinkedIn Company Page and 2. add the [_Sign In With LinkedIn_ product under the Products tab](https://stackoverflow.com/questions/53479131/unauthorized-scope-error-in-linkedin-oauth2-authentication))
+    * [Stack Exchange](https://stackapps.com/apps/oauth/register)
 2. Add the appropriate environment variables to your `.env` file:
     * Netlify: `NETLIFY_OAUTH_CLIENT_ID` and `NETLIFY_OAUTH_CLIENT_SECRET`
     * GitHub: `GITHUB_OAUTH_CLIENT_ID` and `GITHUB_OAUTH_CLIENT_SECRET`
     * GitLab: `GITLAB_OAUTH_CLIENT_ID` and `GITLAB_OAUTH_CLIENT_SECRET`
     * Slack: `SLACK_OAUTH_CLIENT_ID` and `SLACK_OAUTH_CLIENT_SECRET`
     * LinkedIn: `LINKEDIN_OAUTH_CLIENT_ID` and `LINKEDIN_OAUTH_CLIENT_SECRET`
+    * Stack Exchange: `STACKEXCHANGE_OAUTH_CLIENT_ID`, `STACKEXCHANGE_OAUTH_CLIENT_SECRET` and `STACKEXCHANGE_KEY`
 
 For Netlify deployment you'll need to add these environment variables in the Netlify web app by defining them in Settings -> Build & Deploy -> Environment.
 
@@ -65,6 +67,7 @@ Does not have to be in a serverless template. Put it in a shared header on your 
   <button type="submit" name="provider" value="gitlab">Login with GitLab</button>
   <button type="submit" name="provider" value="slack">Login with Slack</button>
   <button type="submit" name="provider" value="linkedin">Login with Linkedin</button>
+  <button type="submit" name="provider" value="stackexchange">Login with Stack Overflow</button>
 </form>
 ```
 
