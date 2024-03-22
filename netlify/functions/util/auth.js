@@ -75,22 +75,23 @@ class OAuth {
     const access_token = this.config.access_token;
     const quotaKey = this.config.quotaKey;
     const url = provider === "stackexchange"
-      ? `this.config.userApi&access_token=${access_token}&key=${quotakey}` 
+      ? `this.config.userApi&access_token=${access_token}&key=${quotaKey}` 
       : this.config.userApi;
     const options = provider === "stackexchange"
     ?  {
-      method: 'GET',
-      headers: {
-        'Accept-Encoding': 'gzip',       
+        method: 'GET',
+        headers: {
+          'Accept-Encoding': 'gzip',       
+        }
       }
     : {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
       }
-    const response = await fetch(url, options)
-    })
+    const response = await fetch(url, options);
   
     console.log( "[auth] getUser response status", response.status );
     if (response.status !== 200) {
