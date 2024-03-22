@@ -75,10 +75,28 @@ const linkedin = {
   userApi: "https://api.linkedin.com/v2/me?projection=(id,localizedFirstName,localizedLastName,profilePicture(displayImage~digitalmediaAsset:playableStreams))",
 }
 
+// https://api.stackexchange.com/docs/authentication
+const stackexchange = {
+  clientIdKey: "STACKEXCHANGE_OAUTH_CLIENT_ID",
+  clientSecretKey: "STACKEXCHANGE_OAUTH_CLIENT_SECRET",
+
+  /* OAuth API endpoints */
+  tokenHost: 'https://stackoverflow.com',
+  tokenPath: 'https://stackoverflow/oauth/access_token',
+  authorizePath: 'https://stackoverflow/oauth',
+
+  /* Key to receive higher request quota */
+  quotaKey: "STACKEXCHANGE_KEY",
+  
+  /* User API endpoint */
+  userApi: "https://api.stackexchange/2.3/me?order=desc&sort=reputation&site=stackoverflow",
+};
+
 module.exports = {
   netlify,
   github,
   gitlab,
   slack,
-  linkedin
+  linkedin,
+  stackexchange
 };
