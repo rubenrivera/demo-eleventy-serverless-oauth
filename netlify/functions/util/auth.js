@@ -1,6 +1,8 @@
 const { AuthorizationCode } = require('simple-oauth2');
 const cookie = require("cookie");
 const fetch = require('node-fetch')
+const zlib = require('zlib');
+
 
 // Warning: process.env.DEPLOY_PRIME_URL won’t work in a Netlify function here.
 const SITE_URL = process.env.URL || 'http://localhost:8888';
@@ -44,15 +46,23 @@ class OAuth {
       Object.assign(cfg, providers.slack);
     } else if(this.provider === "linkedin") {
       Object.assign(cfg, providers.linkedin);
+    } else if(this.provider === "stackexchange") {
+      Object.assign(cfg, providers.stackexchange);
     } else {
-      throw new Error("Invalid provider passed to OAuth. Currently only `netlify`, `github`, `gitlab`, `slack` or `linkedin` are supported.")
+      throw new Error("Invalid provider passed to OAuth. Currently only `netlify`, `github`, `gitlab`, `slack`, `linkedin` or `stackexchange` are supported.")
     }
 
     cfg.clientId = process.env[cfg.clientIdKey];
     cfg.clientSecret = process.env[cfg.clientSecretKey];
 
-    if (!cfg.clientId || !cfg.clientSecret) {
-      throw new Error(`MISSING REQUIRED ENV VARS. ${cfg.clientIdKey} and ${cfg.clientSecretKey} are required.`)
+    if( this.provider === "stackexchange" ){
+      if (!cfg.clientId || !cfg.clientSecret || !cfg.quotaKey) {
+          throw new Error(`MISSING REQUIRED ENV VARS. ${cfg.clientIdKey}, ${cfg.clientSecretKey} and ${cfg.quotaKey} are required.`)
+        }
+    } else {  
+      if (!cfg.clientId || !cfg.clientSecret) {
+        throw new Error(`MISSING REQUIRED ENV VARS. ${cfg.clientIdKey} and ${cfg.clientSecretKey} are required.`)
+      }
     }
 
     return cfg;
@@ -62,21 +72,40 @@ class OAuth {
     if(!token) {
       throw new Error("Missing authorization token.");
     }
-  
-    const response = await fetch(this.config.userApi, {
+    const provider = this.config.provider;
+    const access_token = this.config.access_token;
+    const quotaKey = this.config.quotaKey;
+    const url = provider === "stackexchange"
+      ? `this.config.userApi&access_token=${access_token}&key=${quotakey}` 
+      : this.config.userApi;
+    const options = provider === "stackexchange"
+    ?  {
+      method: 'GET',
+      headers: {
+        'Accept-Encoding': 'gzip',       
+      }
+    : {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       }
+    const response = await fetch(url, options)
     })
   
     console.log( "[auth] getUser response status", response.status );
     if (response.status !== 200) {
       throw new Error(`Error ${await response.text()}`)
     }
-  
-    const data = await response.json()
+
+    let data;
+    if( provider === "stackexchange"){      
+      const gzi = zlib.gzipSync(response.data);
+      data = zlib.gunzipSync(
+        new Buffer.from(gzi)).toString(); 
+    } else {
+      data = await response.json();
+    }
     return data
   }
 }
