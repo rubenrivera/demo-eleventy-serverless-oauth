@@ -1,3 +1,8 @@
+# Stack Exchange
+Add Stack Exchange / Stack Overflow as OAuth provider
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/caad30d0-7b2e-4788-b499-72b5796cc8f2/deploy-status?branch=stackexchange)](https://app.netlify.com/sites/serene-bonbon-b699e0/deploys)
+
 # demo-eleventy-serverless-oauth
 
 A demo project using OAuth to secure some of your Eleventy Serverless routes.
