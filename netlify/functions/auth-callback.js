@@ -1,6 +1,7 @@
 const cookie = require("cookie");
 const querystring = require("querystring");
 const { OAuth, tokens, getCookie } = require("./util/auth.js");
+const fetch = require('node-fetch');
 
 // Function to handle netlify auth callback
 exports.handler = async (event, context) => {
@@ -31,7 +32,30 @@ exports.handler = async (event, context) => {
     let config = oauth.config;
 
     // Take the grant code and exchange for an accessToken
-    const accessToken = await oauth.authorizationCode.getToken({
+    let accessToken;
+    if(state.provider === "stackexchange") {
+      const url = "";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data: {
+          code: code,
+          redirect_uri: config.redirect_uri,
+          client_id: config.clientId,
+          client_secret: config.clientSecret
+        }
+      }  
+      const response = await fetch(url, options);
+      if(response.status === 200){
+        const match = /access_token=([^=&])*/.exec(response.data);
+        accessToken = match ? match[1] : "";
+      } else {
+        throw new Error(response.statusText);
+      }
+    } else {
+      accessToken = await oauth.authorizationCode.getToken({
       code: code,
       redirect_uri: config.redirect_uri,
       client_id: config.clientId,
