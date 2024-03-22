@@ -22,7 +22,7 @@ exports.handler = async (event, context) => {
 
   try {
     // console.log( "[auth-callback] Cookies", event.headers.cookie );
-    let cookies = cookie.parse(event.headers.cookie);
+    let cookies = event.headers.cookie ? cookie.parse(event.headers.cookie) : {};
     if(cookies._11ty_oauth_csrf !== state.csrf) {
       throw new Error("Missing or invalid CSRF token.");
     }
