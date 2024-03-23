@@ -92,7 +92,7 @@ exports.handler = async (event, context) => {
         'Set-Cookie': [
           // This cookie *must* be HttpOnly
           (state.provider === "stackexchange") 
-            ? getCookie("_11ty_oauth_token", token, oauth.config.sessionExpiration),
+            ? getCookie("_11ty_oauth_token", token, oauth.config.sessionExpiration)
             : getCookie("_11ty_oauth_token", tokens.encode(token), oauth.config.sessionExpiration),
           getCookie("_11ty_oauth_provider", state.provider, oauth.config.sessionExpiration),
           getCookie("_11ty_oauth_csrf", "", -1),
