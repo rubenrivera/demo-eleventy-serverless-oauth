@@ -8,7 +8,7 @@ secure:
 
 {% include "logout.njk" %}
 
-<img src="{{ user.avatar_url or user.avatar or user.picture or user["profilePicture"]["displayImage~"]["elements"][0]["identifiers"][0]["identifier"] }}" alt="Avatar for {{ user.name or user.full_name or user.localizedFirstName }}">
+<img src="{{ user.avatar_url or user.avatar or user.picture or user.profile_image or user["profilePicture"]["displayImage~"]["elements"][0]["identifiers"][0]["identifier"] }}" alt="Avatar for {{ user.name or user.full_name or user.localizedFirstName }}">
 
 <h3>Your user information:</h3>
 <pre>
