@@ -89,7 +89,7 @@ const stackexchange = {
   quotaKey: "STACKEXCHANGE_KEY",
   
   /* User API endpoint */
-  userApi: "https://api.stackexchange/2.3/me?order=desc&sort=reputation&site=stackoverflow",
+  userApi: "https://api.stackexchange.com/2.3/me?order=desc&sort=reputation&site=stackoverflow",
 };
 
 module.exports = {
