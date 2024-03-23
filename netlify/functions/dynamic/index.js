@@ -19,8 +19,8 @@ async function handler(event) {
         authToken = cookies._11ty_oauth_token;
       } else {
         authToken = tokens.decode(cookies._11ty_oauth_token);
+      }
     }
-    
   }
 
   let user;
