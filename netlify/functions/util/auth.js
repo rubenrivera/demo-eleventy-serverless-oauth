@@ -1,6 +1,5 @@
 const { AuthorizationCode } = require('simple-oauth2');
 const cookie = require("cookie");
-const zlib = require("zlib");
 
 const { Agent } = require("https");
 
@@ -101,16 +100,6 @@ class OAuth {
     if (response.status !== 200) {
       throw new Error(`Error ${await response.text()}`)
     }
-    /*
-    let data;
-    if( provider === "stackexchange"){
-      const gzi = zlib.gzipSync(response.data,);
-      data = zlib.gunzipSync(
-        new Buffer.from(gzi)).toString(); 
-    } else {
-      data = await response.json();
-    }
-    */
     const data = await response.json();
     return data.items[0];
   }
