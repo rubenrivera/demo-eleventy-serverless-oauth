@@ -2,6 +2,7 @@ const { AuthorizationCode } = require('simple-oauth2');
 const cookie = require("cookie");
 const zlib = require("zlib");
 
+const { Agent } = require("https");
 
 // Warning: process.env.DEPLOY_PRIME_URL won’t work in a Netlify function here.
 const SITE_URL = process.env.URL || 'http://localhost:8888';
@@ -76,14 +77,14 @@ class OAuth {
     const url = provider === "stackexchange"
       ? `${this.config.userApi}&access_token=${token}&key=${quotaKey}` 
       : this.config.userApi;
-    //console.log(url);  
+
     const options = provider === "stackexchange"
-    ?  {
-        method: 'GET',
-        headers: {
-          'Accept-Encoding': 'gzip',       
-        }
-      }
+    ?  (() => {
+      const httpsAgent = new Agent({
+        rejectUnauthorized: false,
+        });
+      return { agent: httpsAgent }
+    })()
     : {
         method: 'GET',
         headers: {
@@ -91,6 +92,9 @@ class OAuth {
           Authorization: `Bearer ${token}`
         }
       }
+
+    console.log("[auth] url", url);  
+    console.log("[auth] options", options);  
     const response = await fetch(url, options);
   
     console.log( "[auth] getUser response status", response.status );
