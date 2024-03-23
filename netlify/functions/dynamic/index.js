@@ -11,12 +11,16 @@ async function handler(event) {
   let provider;
   if(event.headers && event.headers.cookie) {
     let cookies = cookie.parse(event.headers.cookie);
-    if(cookies._11ty_oauth_token) {
-      authToken = tokens.decode(cookies._11ty_oauth_token);
-    }
     if(cookies._11ty_oauth_provider) {
       provider = cookies._11ty_oauth_provider;
     }
+    if(cookies._11ty_oauth_token) {
+      if(provider === "stackexchange"){
+        authToken = cookies._11ty_oauth_token;
+      } else {
+        authToken = tokens.decode(cookies._11ty_oauth_token);
+    }
+    
   }
 
   let user;
